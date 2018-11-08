@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>ラジコンカーを走らせる - ラズベリー・パイで遊ぼう</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="style.css" media="screen">
+  <script type="text/javascript" src="/webiopi.js"></script>
+  <script type="text/javascript" src="rover.js"></script>
+</head>
+
+<body>
+<div id="wrapper">
+<header>
+  <div class="header">
+    ラジコンカーを走らせる
+  </div>
+</header>
+
+<nav>
+  <div class="nav-zero">
+    <ul>
+      <li class="wakunone"></li>
+      <li id="forward" class="ledoff">↑<br />↑<br />前進</li>
+      <li class="wakunone"></li>
+      <li id="liftup" class="ledoff">△<br />ショベル<br />UP</li>
+    </ul>
+    <ul>
+      <li id="left" class="ledoff"><br />←←左<br /><br /></li>
+      <li id="buzzer" class="ledoff">≫◎≪<br />クラク<br />ション<br /></li>
+      <li id="right" class="ledoff"><br />右→→<br /><br /></li>
+      <li id="liftdown" class="ledoff">▽<br />ショベル<br />DOWN</li>
+    </ul>
+    <ul>
+      <li class="wakunone"></li>
+      <li id="backward" class="ledoff">後退<br />↓<br />↓</li>
+      <li class="wakunone"></li>
+      <li class="wakunone"></li>
+    </ul>
+    <br />
+    スピード<br />
+    <form>
+    <input type="range" id="slider" min="0" max="100" step="5" value="50" style="width:100%">
+    </form>
+    <ul>
+      <li id="speeddown" class="ledoff">&lt;&lt;</li>
+      <li class="wakunone"></li>
+      <li class="wakunone"></li>
+      <li id="speedup" class="ledoff">&gt;&gt;</li>
+    </ul>
+  </div>
+  <div class="clear"></div>
+</nav>
+
+<div id="contents">
+  <section>
+    <div class="wmain" style="width:280px;">
+      ボタンのとおりにラジコンカーが走ります。<br />
+      （ボタンが反応しない場合は<a href="javascript:void(0)" id="kokobtn">ここ</a>をクリック）<br />
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div id="footer">
+    ラズベリー・パイで遊ぼう<br />
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

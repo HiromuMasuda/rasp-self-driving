@@ -35,16 +35,15 @@ w().ready(function() {
 
   // 関数：GPIOポートの初期設定（PWMモードに設定する）
   function init_gpio() {
-    var gpios = [MOTOR_A1,MOTOR_A2,MOTOR_B1,MOTOR_B2,LIFT_C1,
-    LIFT_C2,BUZZER];
+    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2, LIFT_C1, LIFT_C2,BUZZER];
     for (var i=0; i<gpios.length; i++) {
       var gpio = gpios[i];
-      w().callMacro( 'pwm_set_function', gpio);
+      w().callMacro('pwm_set_function', gpio);
     }
   }
 
   // 関数：モーターを指定した方向とスピードで動かす
-  function motor(gpio_in1,gpio_in2, mdir, mspeed) {
+  function motor(gpio_in1, gpio_in2, mdir, mspeed) {
     if(mdir) {   // 正転
       motor_speed(gpio_in1, mspeed);
       motor_speed(gpio_in2, 0);
@@ -58,12 +57,12 @@ w().ready(function() {
   function motor_speed(gpio, mspeed) {
     if(mspeed > 0) {   // スタート
       if((oldspd[gpio] == undefined) || (oldspd[gpio] == 0)) {
-        w().callMacro( 'pwm_start', [gpio,MOTOR_FREQ,mspeed] );
+        w().callMacro('pwm_start', [gpio, MOTOR_FREQ,mspeed]);
       } else {   // 変更
-        w().callMacro( 'pwm_duty', [gpio,mspeed]);
+        w().callMacro('pwm_duty', [gpio, mspeed]);
       }
     } else {   // ストップ
-      w().callMacro( 'pwm_stop', gpio );
+      w().callMacro('pwm_stop', gpio);
     }
     oldspd[gpio] = mspeed;
   }
@@ -72,17 +71,17 @@ w().ready(function() {
   function change_direction(mode) {
     direction = mode;
     if(mode == "FOWARD") {    // 前進
-      motor(MOTOR_A1,MOTOR_A2, 1, speed);
-      motor(MOTOR_B1,MOTOR_B2, 1, speed);
+      motor(MOTOR_A1, MOTOR_A2, 1, speed);
+      motor(MOTOR_B1, MOTOR_B2, 1, speed);
     } else if(mode == "BACKWARD") {    // 後退
-      motor(MOTOR_A1,MOTOR_A2, 0, speed);
-      motor(MOTOR_B1,MOTOR_B2, 0, speed);
+      motor(MOTOR_A1, MOTOR_A2, 0, speed);
+      motor(MOTOR_B1, MOTOR_B2, 0, speed);
     } else if(mode == "RIGHT") {    // 右旋回
-      motor(MOTOR_A1,MOTOR_A2, 1, speed);
-      motor(MOTOR_B1,MOTOR_B2, 0, speed);
+      motor(MOTOR_A1, MOTOR_A2, 1, speed);
+      motor(MOTOR_B1, MOTOR_B2, 0, speed);
     } else if(mode == "LEFT") {    // 左旋回
-      motor(MOTOR_A1,MOTOR_A2, 0, speed);
-      motor(MOTOR_B1,MOTOR_B2, 1, speed);
+      motor(MOTOR_A1, MOTOR_A2, 0, speed);
+      motor(MOTOR_B1, MOTOR_B2, 1, speed);
     } else if(mode == "STOP") {    // 停止
       motor_speed(MOTOR_A1, 0);
       motor_speed(MOTOR_A2, 0);
@@ -95,7 +94,7 @@ w().ready(function() {
   function change_speed(num) {
     speed = num;
     if(direction != "STOP") {
-      var gpios = [MOTOR_A1,MOTOR_A2,MOTOR_B1,MOTOR_B2];
+      var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2];
       for (var i=0; i<gpios.length; i++) {
         var gpio = gpios[i];
         if(oldspd[gpio] > 0) {
@@ -108,9 +107,9 @@ w().ready(function() {
   // 関数：クラクションを鳴らす
   function buzzer(mode) {
     if(mode) {
-      w().callMacro( 'pwm_start', [BUZZER,BUZZER_FREQ,50] );
+      w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
     } else {
-      w().callMacro( 'pwm_stop', BUZZER );
+      w().callMacro('pwm_stop', BUZZER);
     }
   }
 
@@ -118,9 +117,9 @@ w().ready(function() {
   function change_lift(mode) {
     lift = mode;
     if(mode == "UP") {    // 上昇
-      motor(LIFT_C1,LIFT_C2, 1, LIFT_CSPEED);
+      motor(LIFT_C1, LIFT_C2, 1, LIFT_CSPEED);
     } else if(mode == "DOWN") {    // 下降
-      motor(LIFT_C1,LIFT_C2, 0, LIFT_CSPEED);
+      motor(LIFT_C1, LIFT_C2, 0, LIFT_CSPEED);
     } else if(mode == "STOP") {    // 停止
       motor_speed(LIFT_C1, 0);
       motor_speed(LIFT_C2, 0);

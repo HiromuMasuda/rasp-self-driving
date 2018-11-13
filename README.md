@@ -143,9 +143,9 @@ def set_gpio_pulldown(io, mode):
     GPIO.setFunction(int(io), GPIO.IN, pud)
 ```
 
-Let the config file recognize the macro.
+Let the config file(/etc/webiopi/config) recognize the macro.
 
-```/etc/webiopi/config
+```
 [SCRIPTS]
 myscript1 = /home/pi/webiopi/test/macro-pud.py
 ```

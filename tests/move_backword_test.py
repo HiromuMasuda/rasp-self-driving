@@ -14,10 +14,10 @@ for io in ios:
     GPIO.setup(io, GPIO.OUT, initial=GPIO.LOW)
 
 # move forward
-GPIO.output(MOTOR_A1, GPIO.HIGH)
-GPIO.output(MOTOR_A2, GPIO.LOW)
-GPIO.output(MOTOR_B1, GPIO.HIGH)
-GPIO.output(MOTOR_B2, GPIO.LOW)
+GPIO.output(MOTOR_A1, GPIO.LOW)
+GPIO.output(MOTOR_A2, GPIO.HIGH)
+GPIO.output(MOTOR_B1, GPIO.LOW)
+GPIO.output(MOTOR_B2, GPIO.HIGH)
 time.sleep(0.5)
 
 # stop

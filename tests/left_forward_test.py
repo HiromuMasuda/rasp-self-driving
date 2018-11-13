@@ -14,7 +14,7 @@ for io in ios:
 # move forward
 GPIO.output(MOTOR_A1, GPIO.HIGH)
 GPIO.output(MOTOR_A2, GPIO.LOW)
-time.sleep(5)
+time.sleep(1)
 
 # stop
 GPIO.output(MOTOR_A1, GPIO.LOW)

@@ -33,6 +33,7 @@ try:
     direction = sys.argv[1]
 except IndexError:
     print("Please add the direction to move as a argument.")
+    direction = "forward"
 
 if direction == "forward":
     left_cw()

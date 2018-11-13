@@ -25,13 +25,19 @@ def right_cw():
     GPIO.output(MOTOR_R1, GPIO.HIGH)
     GPIO.output(MOTOR_R2, GPIO.LOW)
 
-def left_ccw():
+def right_ccw():
     GPIO.output(MOTOR_R1, GPIO.LOW)
     GPIO.output(MOTOR_R2, GPIO.HIGH)
 
-direction = sys.argv[1]
+try:
+    direction = sys.argv[1]
+except IndexError:
+    print("Please add the direction to move as a argument.")
 
-if direction == "right":
+if direction == "forward":
+    left_cw()
+    right_cw()
+elif direction == "right":
     left_cw()
     right_ccw()
 elif direction == "left":
@@ -40,9 +46,8 @@ elif direction == "left":
 elif direction == "backward":
     left_ccw()
     right_ccw()
-else: # == "forward"
-    left_cw()
-    right_cw()
+else:
+    print("Direction must be forward/right/left/backword.")
 
 time.sleep(0.5)
 

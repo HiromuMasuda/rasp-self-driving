@@ -10,7 +10,7 @@ MOTOR_R1 = 13;
 MOTOR_R2 = 6;
 
 GPIO.setmode(GPIO.BCM)
-for io in [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2]:
+for io in [MOTOR_L1, MOTOR_L2, MOTOR_R1, MOTOR_R2]:
     GPIO.setup(io, GPIO.OUT, initial=GPIO.LOW)
 
 def left_cw():

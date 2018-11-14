@@ -115,7 +115,7 @@ w().ready(function() {
 
   // 関数：自動運転を始める
   function self_driving() {
-    w().callMacro('direction_to_move', [], function(macro, args, resp) {
+    w().callMacro('get_direction_to_move', [], function(macro, args, resp) {
       if(resp == "forward") {
         change_direction('FOWARD');
       } else if(resp == "right") {
@@ -125,6 +125,9 @@ w().ready(function() {
       } else if(resp == "backward") {
         change_direction('BACKWARD');
       }
+    });
+    w().callMacro('get_distance', [], function(macro, args, resp) {
+      $(".debug").text(resp)
     });
   }
 

@@ -20,14 +20,6 @@ GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
 GPIO.setwarnings(False)
 
-@webiopi.macro
-def get_direction_to_move():
-    return random.choice(["forward", "right", "left", "backward"])
-
-@webiopi.macro
-def get_distance():
-    calc_distance(TRIG_PIN, ECHO_PIN, 1, V)
-
 # HIGH or LOWの時計測
 def pulseIn(PIN, start=1, end=0):
     if start==0: end = 1
@@ -58,3 +50,11 @@ def calc_distance(TRIG_PIN, ECHO_PIN, num, v=34000):
         print(distance, "cm")
     # ピン設定解除
     GPIO.cleanup()
+
+@webiopi.macro
+def get_direction_to_move():
+    return random.choice(["forward", "right", "left", "backward"])
+
+@webiopi.macro
+def get_distance():
+    return calc_distance(TRIG_PIN, ECHO_PIN, 1, V)

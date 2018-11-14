@@ -127,7 +127,7 @@ w().ready(function() {
       }
     });
     w().callMacro('get_distance', [], function(macro, args, resp) {
-      $(".debug").text(resp)
+      $("#footer").text(resp)
     });
   }
 

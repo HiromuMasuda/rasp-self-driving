@@ -115,14 +115,14 @@ w().ready(function() {
 
   // 関数：自動運転を始める
   function self_driving() {
-    w().callMacro('direction_to_move', null, function(direction) {
-      if(direction == "forward") {
+    w().callMacro('direction_to_move', [], function(macro, args, resp) {
+      if(resp == "forward") {
         change_direction('FOWARD');
-      } else if(direction == "right") {
+      } else if(resp == "right") {
         change_direction('RIGHT');
-      } else if(direction == "left") {
+      } else if(resp == "left") {
         change_direction('LEFT');
-      } else if(direction == "backward") {
+      } else if(resp == "backward") {
         change_direction('BACKWARD');
       }
     });

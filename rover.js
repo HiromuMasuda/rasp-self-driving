@@ -114,12 +114,18 @@ w().ready(function() {
   }
 
   // 関数：自動運転を始める
-  function self_driving(mode) {
-    // if(mode) {
-    //   w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
-    // } else {
-    //   w().callMacro('pwm_stop', BUZZER);
-    // }
+  function self_driving() {
+    w().callMacro('direction_to_move', null, function(direction) {
+      if(direction == "forward") {
+        change_direction('FOWARD');
+      } else if(direction == "right") {
+        change_direction('RIGHT');
+      } else if(direction == "left") {
+        change_direction('LEFT');
+      } else if(direction == "backward") {
+        change_direction('BACKWARD');
+      }
+    });
   }
 
   // 関数：ショベルのモーターを動かす
@@ -193,10 +199,10 @@ w().ready(function() {
   // 「自動運転」ボタンが押されたときのイベント処理
   $('#self-driving').bind(BUTTON_DOWN, function(event) {
     $(this).addClass('ledon');
-    self_driving(1);
+    self_driving();
   }).bind(BUTTON_UP, function(event) {
     $(this).removeClass('ledon');
-    self_driving(0);
+    change_direction('STOP');
   });
 
   // 「ショベルUP」ボタンが押されたときのイベント処理

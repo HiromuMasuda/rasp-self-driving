@@ -113,6 +113,15 @@ w().ready(function() {
     }
   }
 
+  // 関数：自動運転を始める
+  function self_driving(mode) {
+    // if(mode) {
+    //   w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
+    // } else {
+    //   w().callMacro('pwm_stop', BUZZER);
+    // }
+  }
+
   // 関数：ショベルのモーターを動かす
   function change_lift(mode) {
     lift = mode;
@@ -179,6 +188,15 @@ w().ready(function() {
   }).bind(BUTTON_UP, function(event) {
     $(this).removeClass('ledon');
     buzzer(0);
+  });
+
+  // 「自動運転」ボタンが押されたときのイベント処理
+  $('#self-driving').bind(BUTTON_DOWN, function(event) {
+    $(this).addClass('ledon');
+    self_driving(1);
+  }).bind(BUTTON_UP, function(event) {
+    $(this).removeClass('ledon');
+    self_driving(0);
   });
 
   // 「ショベルUP」ボタンが押されたときのイベント処理

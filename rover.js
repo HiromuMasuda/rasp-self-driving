@@ -9,6 +9,9 @@ w().ready(function() {
   var LIFT_C2  = 16;
   var BUZZER   = 21;
 
+  var TRIG     = 14;
+  var ECHO     = 15;
+
   // その他設定
   var LIFT_CSPEED = 100;   // ショベルのスピード（0〜100%）
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
@@ -35,11 +38,12 @@ w().ready(function() {
 
   // 関数：GPIOポートの初期設定（PWMモードに設定する）
   function init_gpio() {
-    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2, LIFT_C1, LIFT_C2,BUZZER];
+    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2, LIFT_C1, LIFT_C2, BUZZER];
     for (var i=0; i<gpios.length; i++) {
       var gpio = gpios[i];
       w().callMacro('pwm_set_function', gpio);
     }
+    w().callMacro('init_ultrasound_gpio', [TRIG, ECHO]);
   }
 
   // 関数：モーターを指定した方向とスピードで動かす
@@ -126,8 +130,8 @@ w().ready(function() {
         change_direction('BACKWARD');
       }
     });
-    w().callMacro('get_distance', [], function(macro, args, resp) {
-      $("#footer").text(resp)
+    w().callMacro('get_distance', [TRIG, ECHO], function(macro, args, resp) {
+      console.log(resp)
     });
   }
 

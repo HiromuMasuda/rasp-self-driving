@@ -5,21 +5,16 @@ w().ready(function() {
   var MOTOR_A2 = 19;
   var MOTOR_B1 = 13;
   var MOTOR_B2 = 6;
-  var LIFT_C1  = 20;
-  var LIFT_C2  = 16;
-  var BUZZER   = 21;
 
+  // 超音波距離センサーの設定
   var TRIG     = 14;
   var ECHO     = 15;
 
   // その他設定
-  var LIFT_CSPEED = 100;   // ショベルのスピード（0〜100%）
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
-  var BUZZER_FREQ = 100;   // クラクションのPWM周波数 100Hz
 
   // 作動状態を保存する変数
   var direction = "STOP";  // 方向: STOP,FOWARD,BACK,RIGHT,LEFT
-  var lift = "STOP";       // ショベル: STOP,UP,DOWN
   var speed = 0;           // スピード: 0〜100%
   var oldspd = [];         // 各GPIO毎のスピード
   var cookie_btnrev = 0;   // クッキーの値
@@ -38,7 +33,7 @@ w().ready(function() {
 
   // 関数：GPIOポートの初期設定（PWMモードに設定する）
   function init_gpio() {
-    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2, LIFT_C1, LIFT_C2, BUZZER];
+    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2];
     for (var i=0; i<gpios.length; i++) {
       var gpio = gpios[i];
       w().callMacro('pwm_set_function', gpio);
@@ -108,15 +103,6 @@ w().ready(function() {
     }
   }
 
-  // 関数：クラクションを鳴らす
-  function buzzer(mode) {
-    if(mode) {
-      w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
-    } else {
-      w().callMacro('pwm_stop', BUZZER);
-    }
-  }
-
   // 関数：自動運転を始める
   function self_driving() {
     w().callMacro('get_direction_to_move', [], function(macro, args, resp) {
@@ -135,28 +121,13 @@ w().ready(function() {
     });
   }
 
-  // 関数：ショベルのモーターを動かす
-  function change_lift(mode) {
-    lift = mode;
-    if(mode == "UP") {    // 上昇
-      motor(LIFT_C1, LIFT_C2, 1, LIFT_CSPEED);
-    } else if(mode == "DOWN") {    // 下降
-      motor(LIFT_C1, LIFT_C2, 0, LIFT_CSPEED);
-    } else if(mode == "STOP") {    // 停止
-      motor_speed(LIFT_C1, 0);
-      motor_speed(LIFT_C2, 0);
-    }
-  }
-
   // 「前進」ボタンが押されたときのイベント処理
   $('#forward').bind(BUTTON_DOWN, function(event) {
-    // 押されたとき
     if(direction == "STOP") {
       $(this).addClass('ledon');
       change_direction('FOWARD');
     }
   }).bind(BUTTON_UP, function(event) {
-    // 離したとき
     $(this).removeClass('ledon');
     change_direction('STOP');
   });
@@ -194,15 +165,6 @@ w().ready(function() {
     change_direction('STOP');
   });
 
-  // 「クラクション」ボタンが押されたときのイベント処理
-  $('#buzzer').bind(BUTTON_DOWN, function(event) {
-    $(this).addClass('ledon');
-    buzzer(1);
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    buzzer(0);
-  });
-
   // 「自動運転」ボタンが押されたときのイベント処理
   $('#self-driving').bind(BUTTON_DOWN, function(event) {
     $(this).addClass('ledon');
@@ -210,28 +172,6 @@ w().ready(function() {
   }).bind(BUTTON_UP, function(event) {
     $(this).removeClass('ledon');
     change_direction('STOP');
-  });
-
-  // 「ショベルUP」ボタンが押されたときのイベント処理
-  $('#liftup').bind(BUTTON_DOWN, function(event) {
-    if(lift == "STOP") {
-      $(this).addClass('ledon');
-      change_lift('UP');
-    }
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    change_lift('STOP');
-  });
-
-  // 「ショベルDOWN」ボタンが押されたときのイベント処理
-  $('#liftdown').bind(BUTTON_DOWN, function(event) {
-    if(lift == "STOP") {
-      $(this).addClass('ledon');
-      change_lift('DOWN');
-    }
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    change_lift('STOP');
   });
 
   // 「スピード」スライダーが変化したときのイベント処理
@@ -278,5 +218,4 @@ w().ready(function() {
   // メイン
   init_gpio();    // GPIOポートの初期設定
   speed = $('#slider').val();
-
 });

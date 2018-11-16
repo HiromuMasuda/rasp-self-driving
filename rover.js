@@ -1,10 +1,11 @@
 w().ready(function() {
 
   // GPIOポートの設定
-  var MOTOR_A1 = 26;
-  var MOTOR_A2 = 19;
-  var MOTOR_B1 = 13;
-  var MOTOR_B2 = 6;
+  var MOTOR_L1 = 26;
+  var MOTOR_L2 = 19;
+  var MOTOR_R1 = 13;
+  var MOTOR_R2 = 6;
+  var MOTORS   = [MOTOR_L1, MOTOR_L2, MOTOR_R1, MOTOR_R2];
 
   // 超音波距離センサーの設定
   var TRIG     = 14;
@@ -33,11 +34,11 @@ w().ready(function() {
 
   // 関数：GPIOポートの初期設定（PWMモードに設定する）
   function init_gpio() {
-    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2];
-    for (var i=0; i<gpios.length; i++) {
-      var gpio = gpios[i];
+    for (var i=0; i<MOTORS.length; i++) {
+      var gpio = MOTORS[i];
       w().callMacro('pwm_set_function', gpio);
     }
+
     w().callMacro('init_ultrasound_gpio', [TRIG, ECHO]);
   }
 
@@ -70,22 +71,22 @@ w().ready(function() {
   function change_direction(mode) {
     direction = mode;
     if(mode == "FOWARD") {    // 前進
-      motor(MOTOR_A1, MOTOR_A2, 1, speed);
-      motor(MOTOR_B1, MOTOR_B2, 1, speed);
+      motor(MOTOR_L1, MOTOR_L2, 1, speed);
+      motor(MOTOR_R1, MOTOR_R2, 1, speed);
     } else if(mode == "BACKWARD") {    // 後退
-      motor(MOTOR_A1, MOTOR_A2, 0, speed);
-      motor(MOTOR_B1, MOTOR_B2, 0, speed);
+      motor(MOTOR_L1, MOTOR_L2, 0, speed);
+      motor(MOTOR_R1, MOTOR_R2, 0, speed);
     } else if(mode == "RIGHT") {    // 右旋回
-      motor(MOTOR_A1, MOTOR_A2, 1, speed);
-      motor(MOTOR_B1, MOTOR_B2, 0, speed);
+      motor(MOTOR_L1, MOTOR_L2, 1, speed);
+      motor(MOTOR_R1, MOTOR_R2, 0, speed);
     } else if(mode == "LEFT") {    // 左旋回
-      motor(MOTOR_A1, MOTOR_A2, 0, speed);
-      motor(MOTOR_B1, MOTOR_B2, 1, speed);
+      motor(MOTOR_L1, MOTOR_L2, 0, speed);
+      motor(MOTOR_R1, MOTOR_R2, 1, speed);
     } else if(mode == "STOP") {    // 停止
-      motor_speed(MOTOR_A1, 0);
-      motor_speed(MOTOR_A2, 0);
-      motor_speed(MOTOR_B1, 0);
-      motor_speed(MOTOR_B2, 0);
+      motor_speed(MOTOR_L1, 0);
+      motor_speed(MOTOR_L2, 0);
+      motor_speed(MOTOR_R1, 0);
+      motor_speed(MOTOR_R2, 0);
     }
   }
 
@@ -93,9 +94,8 @@ w().ready(function() {
   function change_speed(num) {
     speed = num;
     if(direction != "STOP") {
-      var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2];
-      for (var i=0; i<gpios.length; i++) {
-        var gpio = gpios[i];
+      for (var i=0; i<MOTORS.length; i++) {
+        var gpio = MOTORS[i];
         if(oldspd[gpio] > 0) {
           motor_speed(gpio, speed);
         }

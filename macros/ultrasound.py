@@ -35,6 +35,7 @@ def pulseIn(PIN, start=1, end=0):
 
 # 距離計測
 def calc_distance(TRIG_PIN, ECHO_PIN, num, v=34000):
+    distances = []
     for i in range(num):
         # TRIGピンを0.3[s]だけLOW
         GPIO.output(TRIG_PIN, GPIO.LOW)
@@ -47,9 +48,9 @@ def calc_distance(TRIG_PIN, ECHO_PIN, num, v=34000):
         t = pulseIn(ECHO_PIN)
         # 距離[cm] = 音速[cm/s] * 時間[s]/2
         distance = v * t/2
-        print(distance, "cm")
-    # ピン設定解除
+        distances.append(distance)
     GPIO.cleanup()
+    return distances[-1]
 
 @webiopi.macro
 def get_direction_to_move():

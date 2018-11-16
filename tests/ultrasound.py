@@ -51,7 +51,7 @@ def calc_distance(TRIG_PIN, ECHO_PIN, num, v=34000):
         distances.append(distance)
     return distances[-1]
 
-dist = calc_distance(TRIG_PIN, ECHO_PIN, 30, V)
+dist = calc_distance(TRIG_PIN, ECHO_PIN, 1, V)
 print(dist, "cm")
 
 GPIO.cleanup()

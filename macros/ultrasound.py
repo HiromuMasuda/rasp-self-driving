@@ -54,5 +54,4 @@ def get_distance(trig_pin, echo_pin):
         distance = v * t/2
         distances.append(distance)
 
-    GPIO.cleanup()
     return distances[-1]

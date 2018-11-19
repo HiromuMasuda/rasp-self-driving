@@ -5,10 +5,6 @@ import RPi.GPIO as GPIO
 import random
 import time
 
-# TRIGとECHOのGPIO番号
-# TRIG_PIN = 14
-# ECHO_PIN = 15
-
 GPIO.setmode(GPIO.BCM)
 
 @webiopi.macro
@@ -16,9 +12,46 @@ def init_ultrasound_gpio(trig_pin, echo_pin):
     GPIO.setup(int(trig_pin), GPIO.OUT)
     GPIO.setup(int(echo_pin), GPIO.IN)
 
+# FOR DEBUG
+# @webiopi.macro
+# def get_direction_to_move():
+#     return random.choice(["forward", "right", "left", "backward"])
+
 @webiopi.macro
-def get_direction_to_move():
-    return random.choice(["forward", "right", "left", "backward"])
+def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
+    dis_f = get_distance(t_f, e_f)
+    dis_r = get_distance(t_r, e_r)
+    dis_l = get_distance(t_l, e_l)
+    dis_b = get_distance(t_b, e_b)
+
+    if dis_f > 30.0:
+        return "forward"
+    elif dis_f > 10.0:
+        return get_turnable_direction(dis_r, dis_l)
+    elif dis_f > 0
+        return "back"
+    else:
+        return "forward"
+
+@webiopi.macro
+def can_move_to(dis_to_dir):
+    if dis_to_dir > 30.0:
+        return True
+    else:
+        return False
+
+@webiopi.macro
+def get_turnable_direction(dis_r, dis_l):
+    can_move_to_r = can_move_to(dis_r)
+    can_move_to_l = can_move_to(dis_l)
+    if can_move_to_r && can_move_to_l:
+        return random.choice(["right", "left"])
+    elif can_move_to_r && !can_move_to_l:
+        return "right"
+    elif !can_move_to_r && can_move_to_l:
+        return "left"
+    else:
+        return "back"
 
 @webiopi.macro
 def get_distance(trig_pin, echo_pin):

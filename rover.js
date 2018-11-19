@@ -8,8 +8,14 @@ w().ready(function() {
   var MOTORS   = [MOTOR_L1, MOTOR_L2, MOTOR_R1, MOTOR_R2];
 
   // 超音波距離センサーの設定
-  var TRIG     = 14;
-  var ECHO     = 15;
+  var TRIG_F   = 14;
+  var ECHO_F   = 15;
+  var TRIG_R   = 14;
+  var ECHO_R   = 15;
+  var TRIG_L   = 14;
+  var ECHO_L   = 15;
+  var TRIG_B   = 14;
+  var ECHO_F   = 15;
 
   // その他設定
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
@@ -115,9 +121,6 @@ w().ready(function() {
       } else if(resp == "backward") {
         change_direction('BACKWARD');
       }
-    });
-    w().callMacro('get_distance', [TRIG, ECHO], function(macro, args, resp) {
-      console.log(resp)
     });
   }
 

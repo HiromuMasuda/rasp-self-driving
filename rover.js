@@ -15,7 +15,7 @@ w().ready(function() {
   var TRIG_L   = 14;
   var ECHO_L   = 15;
   var TRIG_B   = 14;
-  var ECHO_F   = 15;
+  var ECHO_B   = 15;
 
   // その他設定
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz

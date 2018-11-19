@@ -45,7 +45,10 @@ w().ready(function() {
       w().callMacro('pwm_set_function', gpio);
     }
 
-    w().callMacro('init_ultrasound_gpio', [TRIG, ECHO]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_F, ECHO_F]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_R, ECHO_R]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_L, ECHO_L]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_B, ECHO_B]);
   }
 
   // 関数：モーターを指定した方向とスピードで動かす

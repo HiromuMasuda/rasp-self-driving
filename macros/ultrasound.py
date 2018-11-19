@@ -28,7 +28,7 @@ def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
         return "forward"
     elif dis_f > 10.0:
         return get_turnable_direction(dis_r, dis_l)
-    elif dis_f > 0
+    elif dis_f > 0:
         return "back"
     else:
         return "forward"

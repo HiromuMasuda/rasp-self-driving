@@ -44,11 +44,11 @@ def can_move_to(dis_to_dir):
 def get_turnable_direction(dis_r, dis_l):
     can_move_to_r = can_move_to(dis_r)
     can_move_to_l = can_move_to(dis_l)
-    if can_move_to_r && can_move_to_l:
+    if can_move_to_r and can_move_to_l:
         return random.choice(["right", "left"])
-    elif can_move_to_r && !can_move_to_l:
+    elif can_move_to_r and not can_move_to_l:
         return "right"
-    elif !can_move_to_r && can_move_to_l:
+    elif not can_move_to_r and can_move_to_l:
         return "left"
     else:
         return "back"

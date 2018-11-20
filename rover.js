@@ -112,9 +112,10 @@ w().ready(function() {
     }
   }
 
-  // 関数：自動運転を始める
-  function self_driving() {
+  // 関数：マクロを呼んで指定された方向に進む
+  function move_to_direction() {
     w().callMacro('get_direction_to_move', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
+      console.log(resp) // DEBUG
       if(resp == "forward") {
         change_direction('FOWARD');
       } else if(resp == "right") {
@@ -125,6 +126,21 @@ w().ready(function() {
         change_direction('BACKWARD');
       }
     });
+  }
+
+  // 関数：move_to_directionを一定秒ごとに呼び出すため
+  function self_driving_loop(maxCount, i, msec) {
+    if (i <= maxCount) {
+      move_to_direction();
+      setTimeout(function(){
+        self_driving_loop(maxCount, ++i)
+      }, msec);
+    }
+  }
+
+  // 関数：自動運転を始める
+  function self_driving() {
+    self_driving_loop(5, 0, 3000)
   }
 
   // 「前進」ボタンが押されたときのイベント処理

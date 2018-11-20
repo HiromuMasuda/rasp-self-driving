@@ -114,7 +114,7 @@ w().ready(function() {
 
   // 関数：自動運転を始める
   function self_driving() {
-    w().callMacro('get_direction_to_move', [], function(macro, args, resp) {
+    w().callMacro('get_direction_to_move', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
       if(resp == "forward") {
         change_direction('FOWARD');
       } else if(resp == "right") {

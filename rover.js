@@ -21,7 +21,7 @@ w().ready(function() {
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
 
   // 作動状態を保存する変数
-  var direction = "STOP";  // 方向: STOP,FOWARD,BACK,RIGHT,LEFT
+  var direction = "STOP";  // 方向: STOP,FORWARD,BACK,RIGHT,LEFT
   var speed = 0;           // スピード: 0〜100%
   var oldspd = [];         // 各GPIO毎のスピード
   var cookie_btnrev = 0;   // クッキーの値
@@ -79,7 +79,7 @@ w().ready(function() {
   // 関数：キャタピラのモーターを動かす
   function change_direction(mode) {
     direction = mode;
-    if(mode == "FOWARD") {    // 前進
+    if(mode == "FORWARD") {    // 前進
       motor(MOTOR_L1, MOTOR_L2, 1, speed);
       motor(MOTOR_R1, MOTOR_R2, 1, speed);
     } else if(mode == "BACKWARD") {    // 後退
@@ -116,38 +116,33 @@ w().ready(function() {
   function move_to_direction() {
     w().callMacro('get_direction_to_move', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
       console.log(resp) // DEBUG
-      if(resp == "forward") {
-        change_direction('FOWARD');
-      } else if(resp == "right") {
-        change_direction('RIGHT');
-      } else if(resp == "left") {
-        change_direction('LEFT');
-      } else if(resp == "backward") {
-        change_direction('BACKWARD');
-      }
+      change_direction(resp.toUpperCase());
     });
   }
 
   // 関数：move_to_directionを一定秒ごとに呼び出すため
-  function self_driving_loop(maxCount, i, msec) {
-    if (i <= maxCount) {
-      move_to_direction();
-      setTimeout(function(){
-        self_driving_loop(maxCount, ++i)
-      }, msec);
-    }
-  }
+  function self_driving_loop(maxCount, i) {
+    return new Promise(resolve => {
+      if (i <= maxCount) {
+         move_to_direction();
+         setTimeout(function(){
+  	 self_driving_loop(maxCount, ++i)
+  	 resolve()
+         }, 1000);
+      }
+    })
+  };
 
   // 関数：自動運転を始める
   function self_driving() {
-    self_driving_loop(5, 0, 3000)
+    self_driving_loop(5, 0)
   }
 
   // 「前進」ボタンが押されたときのイベント処理
   $('#forward').bind(BUTTON_DOWN, function(event) {
     if(direction == "STOP") {
       $(this).addClass('ledon');
-      change_direction('FOWARD');
+      change_direction('FORWARD');
     }
   }).bind(BUTTON_UP, function(event) {
     $(this).removeClass('ledon');

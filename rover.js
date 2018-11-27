@@ -1,22 +1,27 @@
 w().ready(function() {
 
   // GPIOポートの設定
-  var MOTOR_A1 = 26;
-  var MOTOR_A2 = 19;
-  var MOTOR_B1 = 13;
-  var MOTOR_B2 = 6;
-  var LIFT_C1  = 20;
-  var LIFT_C2  = 16;
-  var BUZZER   = 21;
+  var MOTOR_L1 = 26;
+  var MOTOR_L2 = 19;
+  var MOTOR_R1 = 13;
+  var MOTOR_R2 = 6;
+  var MOTORS   = [MOTOR_L1, MOTOR_L2, MOTOR_R1, MOTOR_R2];
+
+  // 超音波距離センサーの設定
+  var TRIG_F   = 14;
+  var ECHO_F   = 15;
+  var TRIG_R   = 23;
+  var ECHO_R   = 24;
+  var TRIG_L   = 3;
+  var ECHO_L   = 4;
+  var TRIG_B   = 17;
+  var ECHO_B   = 27;
 
   // その他設定
-  var LIFT_CSPEED = 100;   // ショベルのスピード（0〜100%）
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
-  var BUZZER_FREQ = 100;   // クラクションのPWM周波数 100Hz
 
   // 作動状態を保存する変数
-  var direction = "STOP";  // 方向: STOP,FOWARD,BACK,RIGHT,LEFT
-  var lift = "STOP";       // ショベル: STOP,UP,DOWN
+  var direction = "STOP";  // 方向: STOP,FORWARD,BACK,RIGHT,LEFT
   var speed = 0;           // スピード: 0〜100%
   var oldspd = [];         // 各GPIO毎のスピード
   var cookie_btnrev = 0;   // クッキーの値
@@ -35,11 +40,15 @@ w().ready(function() {
 
   // 関数：GPIOポートの初期設定（PWMモードに設定する）
   function init_gpio() {
-    var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2, LIFT_C1, LIFT_C2,BUZZER];
-    for (var i=0; i<gpios.length; i++) {
-      var gpio = gpios[i];
+    for (var i=0; i<MOTORS.length; i++) {
+      var gpio = MOTORS[i];
       w().callMacro('pwm_set_function', gpio);
     }
+
+    w().callMacro('init_ultrasound_gpio', [TRIG_F, ECHO_F]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_R, ECHO_R]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_L, ECHO_L]);
+    w().callMacro('init_ultrasound_gpio', [TRIG_B, ECHO_B]);
   }
 
   // 関数：モーターを指定した方向とスピードで動かす
@@ -70,23 +79,23 @@ w().ready(function() {
   // 関数：キャタピラのモーターを動かす
   function change_direction(mode) {
     direction = mode;
-    if(mode == "FOWARD") {    // 前進
-      motor(MOTOR_A1, MOTOR_A2, 1, speed);
-      motor(MOTOR_B1, MOTOR_B2, 1, speed);
+    if(mode == "FORWARD") {    // 前進
+      motor(MOTOR_L1, MOTOR_L2, 1, speed);
+      motor(MOTOR_R1, MOTOR_R2, 1, speed);
     } else if(mode == "BACKWARD") {    // 後退
-      motor(MOTOR_A1, MOTOR_A2, 0, speed);
-      motor(MOTOR_B1, MOTOR_B2, 0, speed);
+      motor(MOTOR_L1, MOTOR_L2, 0, speed);
+      motor(MOTOR_R1, MOTOR_R2, 0, speed);
     } else if(mode == "RIGHT") {    // 右旋回
-      motor(MOTOR_A1, MOTOR_A2, 1, speed);
-      motor(MOTOR_B1, MOTOR_B2, 0, speed);
+      motor(MOTOR_L1, MOTOR_L2, 1, speed);
+      motor(MOTOR_R1, MOTOR_R2, 0, speed);
     } else if(mode == "LEFT") {    // 左旋回
-      motor(MOTOR_A1, MOTOR_A2, 0, speed);
-      motor(MOTOR_B1, MOTOR_B2, 1, speed);
+      motor(MOTOR_L1, MOTOR_L2, 0, speed);
+      motor(MOTOR_R1, MOTOR_R2, 1, speed);
     } else if(mode == "STOP") {    // 停止
-      motor_speed(MOTOR_A1, 0);
-      motor_speed(MOTOR_A2, 0);
-      motor_speed(MOTOR_B1, 0);
-      motor_speed(MOTOR_B2, 0);
+      motor_speed(MOTOR_L1, 0);
+      motor_speed(MOTOR_L2, 0);
+      motor_speed(MOTOR_R1, 0);
+      motor_speed(MOTOR_R2, 0);
     }
   }
 
@@ -94,9 +103,8 @@ w().ready(function() {
   function change_speed(num) {
     speed = num;
     if(direction != "STOP") {
-      var gpios = [MOTOR_A1, MOTOR_A2, MOTOR_B1, MOTOR_B2];
-      for (var i=0; i<gpios.length; i++) {
-        var gpio = gpios[i];
+      for (var i=0; i<MOTORS.length; i++) {
+        var gpio = MOTORS[i];
         if(oldspd[gpio] > 0) {
           motor_speed(gpio, speed);
         }
@@ -104,46 +112,45 @@ w().ready(function() {
     }
   }
 
-  // 関数：クラクションを鳴らす
-  function buzzer(mode) {
-    if(mode) {
-      w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
-    } else {
-      w().callMacro('pwm_stop', BUZZER);
-    }
+  // 関数：マクロを呼んで指定された方向に進む
+  function move_to_direction() {
+    w().callMacro('get_direction', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
+      resp = JSON.parse(resp)
+      direction = resp.direction.toUpperCase()
+
+      // DEBUG
+      console.log(direction)
+      console.log(resp.distances)
+
+      change_direction(direction);
+    });
   }
+
+  // 関数：move_to_directionを一定秒ごとに呼び出す
+  function self_driving_loop(maxCount, i) {
+    return new Promise(resolve => {
+      if (i <= maxCount) {
+         move_to_direction();
+         setTimeout(function(){
+  	 self_driving_loop(maxCount, ++i)
+  	 resolve()
+         }, 1000);
+      }
+    })
+  };
 
   // 関数：自動運転を始める
-  function self_driving(mode) {
-    // if(mode) {
-    //   w().callMacro('pwm_start', [BUZZER, BUZZER_FREQ, 50]);
-    // } else {
-    //   w().callMacro('pwm_stop', BUZZER);
-    // }
-  }
-
-  // 関数：ショベルのモーターを動かす
-  function change_lift(mode) {
-    lift = mode;
-    if(mode == "UP") {    // 上昇
-      motor(LIFT_C1, LIFT_C2, 1, LIFT_CSPEED);
-    } else if(mode == "DOWN") {    // 下降
-      motor(LIFT_C1, LIFT_C2, 0, LIFT_CSPEED);
-    } else if(mode == "STOP") {    // 停止
-      motor_speed(LIFT_C1, 0);
-      motor_speed(LIFT_C2, 0);
-    }
+  function self_driving() {
+    self_driving_loop(5, 0)
   }
 
   // 「前進」ボタンが押されたときのイベント処理
   $('#forward').bind(BUTTON_DOWN, function(event) {
-    // 押されたとき
     if(direction == "STOP") {
       $(this).addClass('ledon');
-      change_direction('FOWARD');
+      change_direction('FORWARD');
     }
   }).bind(BUTTON_UP, function(event) {
-    // 離したとき
     $(this).removeClass('ledon');
     change_direction('STOP');
   });
@@ -181,44 +188,13 @@ w().ready(function() {
     change_direction('STOP');
   });
 
-  // 「クラクション」ボタンが押されたときのイベント処理
-  $('#buzzer').bind(BUTTON_DOWN, function(event) {
-    $(this).addClass('ledon');
-    buzzer(1);
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    buzzer(0);
-  });
-
   // 「自動運転」ボタンが押されたときのイベント処理
   $('#self-driving').bind(BUTTON_DOWN, function(event) {
     $(this).addClass('ledon');
-    self_driving(1);
+    self_driving();
   }).bind(BUTTON_UP, function(event) {
     $(this).removeClass('ledon');
-    self_driving(0);
-  });
-
-  // 「ショベルUP」ボタンが押されたときのイベント処理
-  $('#liftup').bind(BUTTON_DOWN, function(event) {
-    if(lift == "STOP") {
-      $(this).addClass('ledon');
-      change_lift('UP');
-    }
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    change_lift('STOP');
-  });
-
-  // 「ショベルDOWN」ボタンが押されたときのイベント処理
-  $('#liftdown').bind(BUTTON_DOWN, function(event) {
-    if(lift == "STOP") {
-      $(this).addClass('ledon');
-      change_lift('DOWN');
-    }
-  }).bind(BUTTON_UP, function(event) {
-    $(this).removeClass('ledon');
-    change_lift('STOP');
+    change_direction('STOP');
   });
 
   // 「スピード」スライダーが変化したときのイベント処理
@@ -265,5 +241,4 @@ w().ready(function() {
   // メイン
   init_gpio();    // GPIOポートの初期設定
   speed = $('#slider').val();
-
 });

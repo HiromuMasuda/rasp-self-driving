@@ -3,6 +3,21 @@ Self-driving program using raspberryPi and various of sensors.
 
 ## Usage
 
+
+### 1. Set the macro script which you want to use as a sensor
+Let the config file(/etc/webiopi/config) recognize the macro.
+
+```
+[SCRIPTS]
+myscript1 = /home/pi/webiopi/rasp-self-driving/macros/ultrasound.py
+```
+Restart webiopi.
+
+```
+sudo systemctl restart webiopi
+```
+
+### 2. Access WebIOPi
 http://raspberrypi.local:8000/rasp-self-driving/rover.html
 
 

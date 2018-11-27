@@ -92,9 +92,9 @@ def get_direction(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
     context = {
         "direction": direction,
         "distances": {
-            "frorward": dis_f,
-            "right": dis_r,
-            "left":  dis_l,
+            "forward":  dis_f,
+            "right":    dis_r,
+            "left":     dis_l,
             "backward": dis_b,
         }
     }

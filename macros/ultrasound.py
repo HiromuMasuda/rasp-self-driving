@@ -70,21 +70,24 @@ def get_turnable_direction(dis_r, dis_l):
         return "backward"
 
 @webiopi.macro
-def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
+def get_direction_to_move(dis_f, dis_r, dis_l, dis_b):
+    if dis_f > 30.0:
+        return "forward"
+    elif dis_f > 10.0:
+        return get_turnable_direction(dis_r, dis_l)
+    elif dis_f > 0:
+        return "backward"
+    else:
+        return "forward"
+
+@webiopi.macro
+def get_direction(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
     dis_f = get_distance(t_f, e_f)
     dis_r = get_distance(t_r, e_r)
     dis_l = get_distance(t_l, e_l)
     dis_b = get_distance(t_b, e_b)
 
-    direction = ""
-    if dis_f > 30.0:
-        direction = "forward"
-    elif dis_f > 10.0:
-        direction = get_turnable_direction(dis_r, dis_l)
-    elif dis_f > 0:
-        direction = "backward"
-    else:
-        direction = "forward"
+    direction = get_direction_to_move(dis_f, dis_r, dis_l, dis_b)
 
     context = {
         "direction": direction,
@@ -95,4 +98,4 @@ def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
             "backward": dis_b,
         }
     }
-    return json.dump(context)
+    return json.dumps(context)

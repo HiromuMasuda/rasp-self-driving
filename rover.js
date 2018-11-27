@@ -115,6 +115,7 @@ w().ready(function() {
   // 関数：マクロを呼んで指定された方向に進む
   function move_to_direction() {
     w().callMacro('get_direction_to_move', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
+      resp = JSON.parse(resp)
       direction = resp.direction.toUpperCase()
 
       // DEBUG

@@ -4,6 +4,7 @@ import webiopi
 import RPi.GPIO as GPIO
 import random
 import time
+import json
 
 GPIO.setmode(GPIO.BCM)
 
@@ -94,4 +95,4 @@ def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
             "backward": dis_b,
         }
     }
-    return context
+    return json.dump(context)

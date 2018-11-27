@@ -10,10 +10,10 @@ w().ready(function() {
   // 超音波距離センサーの設定
   var TRIG_F   = 14;
   var ECHO_F   = 15;
-  var TRIG_R   = 14;
-  var ECHO_R   = 15;
-  var TRIG_L   = 14;
-  var ECHO_L   = 15;
+  var TRIG_R   = 23;
+  var ECHO_R   = 24;
+  var TRIG_L   = 3;
+  var ECHO_L   = 4;
   var TRIG_B   = 14;
   var ECHO_B   = 15;
 
@@ -115,12 +115,17 @@ w().ready(function() {
   // 関数：マクロを呼んで指定された方向に進む
   function move_to_direction() {
     w().callMacro('get_direction_to_move', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
-      console.log(resp) // DEBUG
-      change_direction(resp.toUpperCase());
+      direction = resp.direction.toUpperCase()
+
+      // DEBUG
+      console.log(direction)
+      console.log(resp.distances)
+
+      change_direction(direction);
     });
   }
 
-  // 関数：move_to_directionを一定秒ごとに呼び出すため
+  // 関数：move_to_directionを一定秒ごとに呼び出す
   function self_driving_loop(maxCount, i) {
     return new Promise(resolve => {
       if (i <= maxCount) {

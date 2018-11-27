@@ -12,11 +12,6 @@ def init_ultrasound_gpio(trig_pin, echo_pin):
     GPIO.setup(int(trig_pin), GPIO.OUT)
     GPIO.setup(int(echo_pin), GPIO.IN)
 
-# FOR DEBUG
-# @webiopi.macro
-# def get_direction_to_move():
-#     return random.choice(["forward", "right", "left", "backward"])
-
 @webiopi.macro
 def get_distance(trig_pin, echo_pin):
     TRIG_PIN = int(trig_pin)
@@ -49,7 +44,7 @@ def get_distance(trig_pin, echo_pin):
 
         # 距離[cm] = 音速[cm/s] * 時間[s]/2
         distance = v * t/2
-        distances.append(distance)
+        distances.append(round(distance, 2))
 
     return distances[-1]
 
@@ -80,11 +75,23 @@ def get_direction_to_move(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):
     dis_l = get_distance(t_l, e_l)
     dis_b = get_distance(t_b, e_b)
 
+    direction = ""
     if dis_f > 30.0:
-        return "forward"
+        direction = "forward"
     elif dis_f > 10.0:
-        return get_turnable_direction(dis_r, dis_l)
+        direction = get_turnable_direction(dis_r, dis_l)
     elif dis_f > 0:
-        return "backward"
+        direction = "backward"
     else:
-        return "forward"
+        direction = "forward"
+
+    context = {
+        "direction": direction,
+        "distances": {
+            "frorward": dis_f,
+            "right": dis_r,
+            "left":  dis_l,
+            "backward": dis_b,
+        }
+    }
+    return context

@@ -51,7 +51,7 @@ def get_distance(trig_pin, echo_pin):
 
 @webiopi.macro
 def can_move_to(dis_to_dir):
-    if dis_to_dir > 30.0:
+    if dis_to_dir > 40.0:
         return True
     else:
         return False
@@ -71,14 +71,19 @@ def get_turnable_direction(dis_r, dis_l):
 
 @webiopi.macro
 def get_direction_to_move(dis_f, dis_r, dis_l, dis_b):
-    if dis_f > 30.0:
+    if dis_f > 40.0:
         return "forward"
-    elif dis_f > 10.0:
+    elif dis_f > 20.0:
         return get_turnable_direction(dis_r, dis_l)
     elif dis_f > 0:
-        return "backward"
+        if dis_b > 40.0:
+            return "backward"
+        elif dis_b > 20.0:
+            return get_turnable_direction(dis_r, dis_l)
+        else:
+            return "forward"
     else:
-        return "forward"
+        return "backward"
 
 @webiopi.macro
 def get_direction(t_f, e_f, t_r, e_r, t_l, e_l, t_b, e_b):

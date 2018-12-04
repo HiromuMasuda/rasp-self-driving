@@ -1,11 +1,6 @@
 w().ready(function() {
 
-  console.log("infrared.js is successfully loaded!");
-
-  // 1. 毎秒、赤外線モジュールからの入力を確認
-  // 2. 動きがあったらslack通知用のマクロを呼び出す
-
-  var INFRARED = 25
+  var INFRARED = 25;
 
   function check_infrared_input() {
     w().digitalRead(INFRARED, function(io, data){
@@ -18,5 +13,21 @@ w().ready(function() {
     });
   }
 
-  check_infrared_input()
+  function wait_infrared_input_loop(maxCount, i) {
+    return new Promise(resolve => {
+      if (i <= maxCount) {
+         check_infrared_input();
+         setTimeout(function(){
+  	 wait_infrared_input_loop(maxCount, ++i);
+  	 resolve()
+         }, 5000);
+      }
+    })
+  };
+
+  function wait_infrared_input() {
+    wait_infrared_input_loop(5, 0);
+  }
+
+  wait_infrared_input_loop();
 });

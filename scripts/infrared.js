@@ -14,8 +14,8 @@ w().ready(function() {
         w().callMacro('notify_slack', []);
       } else {
         console.log("INFRARED: 0");
-      });
-    }
+      }
+    });
   }
 
   check_infrared_input()

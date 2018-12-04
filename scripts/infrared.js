@@ -7,18 +7,16 @@ w().ready(function() {
 
   var INFRARED = 25
 
-  function get_infrared_input() {
+  function check_infrared_input() {
     w().digitalRead(port, function(INFRARED, data){
       if(data == 1) {
         console.log("INFRARED: 1");
-        w().callMacro('notifly_slack', []);
+        w().callMacro('notify_slack', []);
       } else {
         console.log("INFRARED: 0");
-      }
+      });
     }
   }
 
-  $("#footer").click(
-    get_infrared_input()
-  );
+  check_infrared_input()
 });

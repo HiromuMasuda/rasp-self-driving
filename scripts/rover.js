@@ -17,6 +17,9 @@ w().ready(function() {
   var TRIG_B   = 17;
   var ECHO_B   = 27;
 
+  // 赤外線センサーモジュールの設定
+  var INFRARED = 25;
+
   // その他設定
   var MOTOR_FREQ  = 500;   // モーターのPWM周波数 500Hz
 
@@ -238,7 +241,40 @@ w().ready(function() {
     e.stopPropagation();
   });
 
+  // 赤外線センサーからの信号を受信して処理
+  function check_infrared_input() {
+    w().digitalRead(INFRARED, function(io, data){
+      if(data == 1) {
+        console.log("INFRARED: 1");
+        // w().callMacro('notify_slack', []);
+      } else {
+        console.log("INFRARED: 0");
+      }
+    });
+  }
+
+  // check_infrared_inputを一定時間で繰り返すための関数
+  function wait_infrared_input_loop(maxCount, i) {
+    return new Promise(resolve => {
+      if (i <= maxCount) {
+         check_infrared_input();
+         setTimeout(function(){
+           wait_infrared_input_loop(maxCount, ++i);
+           resolve()
+         }, 5000);
+      }
+    })
+  };
+
+  // check_infrared_inputを指定回数呼び出すための関数
+  function wait_infrared_input() {
+    wait_infrared_input_loop(5, 0);
+  }
+
   // メイン
   init_gpio();    // GPIOポートの初期設定
   speed = $('#slider').val();
+
+  // TODO: 自動運転中に呼び出すように修正
+  wait_infrared_input();
 });

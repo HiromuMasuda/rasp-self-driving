@@ -8,7 +8,7 @@ w().ready(function() {
   var INFRARED = 25
 
   function check_infrared_input() {
-    w().digitalRead(port, function(INFRARED, data){
+    w().digitalRead(INFRARED, function(io, data){
       if(data == 1) {
         console.log("INFRARED: 1");
         w().callMacro('notify_slack', []);

@@ -6,7 +6,7 @@ w().ready(function() {
     w().digitalRead(INFRARED, function(io, data){
       if(data == 1) {
         console.log("INFRARED: 1");
-        w().callMacro('notify_slack', []);
+        // w().callMacro('notify_slack', []);
       } else {
         console.log("INFRARED: 0");
       }
@@ -29,5 +29,5 @@ w().ready(function() {
     wait_infrared_input_loop(5, 0);
   }
 
-  wait_infrared_input_loop();
+  wait_infrared_input();
 });

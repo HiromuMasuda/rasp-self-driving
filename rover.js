@@ -113,7 +113,7 @@ w().ready(function() {
   }
 
   // 関数：マクロを呼んで指定された方向に進む
-  function move_to_direction() {
+  function move_to_direction(is_last = false) {
     w().callMacro('get_direction', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
       resp = JSON.parse(resp)
       direction = resp.direction.toUpperCase()
@@ -122,7 +122,11 @@ w().ready(function() {
       console.log(direction)
       console.log(resp.distances)
 
-      change_direction(direction);
+      if (is_last) {
+        change_direction("STOP");
+      } else {
+        change_direction(direction);
+      }
     });
   }
 
@@ -130,9 +134,14 @@ w().ready(function() {
   function self_driving_loop(maxCount, i) {
     return new Promise(resolve => {
       if (i <= maxCount) {
-         move_to_direction();
+	 if (i < maxCount) {
+	   move_to_direction();
+	 } else {
+           is_last = true
+	   move_to_direction(is_last);
+	 }
          setTimeout(function(){
-  	 self_driving_loop(maxCount, ++i)
+         self_driving_loop(maxCount, ++i)
   	 resolve()
          }, 1000);
       }

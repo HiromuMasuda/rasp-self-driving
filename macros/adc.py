@@ -3,6 +3,7 @@
 import webiopi
 import RPi.GPIO as GPIO
 import time
+import json
 
 GPIO.setmode(GPIO.BCM)
 
@@ -49,3 +50,15 @@ def read_adc(adcnum, clk, mosi, miso, cs):
             adcout |= 0x1
     GPIO.output(cs, GPIO.HIGH)
     return adcout
+
+@webiopi.macro
+def get_direction_from_adc(clk, mosi, miso, cs):
+    adc_out = read_adc(0, clk, mosi, miso. cs)
+
+    # getting direction logic HERE
+
+    context = {
+        "direction": "forward",
+        "adc_out": adc_out
+    }
+    return json.dumps(context)

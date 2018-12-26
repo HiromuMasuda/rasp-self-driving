@@ -262,12 +262,15 @@ w().ready(function() {
 
 
   // 関数：ADCの出力した値をコンソールに出力する
-  function read_adc() {
-    w().callMacro('read_adc', [0, ADC_CLK, ADC_MOSI, ADC_MISO, ADC_CS], function(macro, args, resp) {
+  function read_adc(is_last = false) {
+    w().callMacro('get_direction_from_adc', [ADC_CLK, ADC_MOSI, ADC_MISO, ADC_CS], function(macro, args, resp) {
       resp = JSON.parse(resp)
+      direction = resp.direction.toUpperCase()
+      adc_out = resp.adc_out
 
       // DEBUG
-      console.log(resp)
+      console.log(direction)
+      console.log(adc_out)
 
       // if (is_last) {
       //   change_direction("STOP");
@@ -281,7 +284,12 @@ w().ready(function() {
   function read_adc_loop(maxCount, i) {
     return new Promise(resolve => {
       if (i <= maxCount) {
-        read_adc();
+        if (i < maxCount) {
+          read_adc();
+        } else {
+          is_last = true
+          read_adc(is_last);
+        }
         setTimeout(function(){
           read_adc_loop(maxCount, ++i)
           resolve()

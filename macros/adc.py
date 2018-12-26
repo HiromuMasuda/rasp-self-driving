@@ -53,7 +53,7 @@ def read_adc(adcnum, clk, mosi, miso, cs):
 
 @webiopi.macro
 def get_direction_from_adc(clk, mosi, miso, cs):
-    adc_out = read_adc(0, clk, mosi, miso. cs)
+    adc_out = read_adc(0, clk, mosi, miso, cs)
 
     # getting direction logic HERE
 

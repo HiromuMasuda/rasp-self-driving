@@ -274,7 +274,7 @@ w().ready(function() {
       console.log(direction)
       console.log(adc_out)
 
-      w().callMacro('notify_slack', []);
+      w().callMacro('notify_slack', [adc_out]);
 
       // if (is_last) {
       //   change_direction("STOP");

@@ -265,7 +265,7 @@ w().ready(function() {
 
 
   // 関数：ADCの出力した値をコンソールに出力する
-  function read_adc(adc_out = 0, is_last = false) {
+  function read_adc(adc_out, is_last = false) {
     w().callMacro('get_direction_from_adc', [adc_out, ADC_CLK, ADC_MOSI, ADC_MISO, ADC_CS], function(macro, args, resp) {
       resp = JSON.parse(resp)
       direction = resp.direction.toUpperCase()
@@ -285,12 +285,12 @@ w().ready(function() {
   }
 
   // 関数：read_adcを一定秒ごとに呼び出す
-  function read_adc_loop(maxCount, i, adc_out = 0) {
+  function read_adc_loop(maxCount, i, adc_out) {
     return new Promise(resolve => {
       if (i <= maxCount) {
         if (i == 0) {
           adc_out = read_adc(adc_out);
-        else if (i < maxCount) {
+        } else if (i < maxCount) {
           adc_out = read_adc(adc_out);
         } else {
           is_last = true

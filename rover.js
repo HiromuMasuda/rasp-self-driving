@@ -120,47 +120,6 @@ w().ready(function() {
     }
   }
 
-  // 関数：マクロを呼んで指定された方向に進む
-  function move_to_direction(is_last = false) {
-    w().callMacro('get_direction', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
-      resp = JSON.parse(resp)
-      direction = resp.direction.toUpperCase()
-
-      // DEBUG
-      console.log(direction)
-      console.log(resp.distances)
-
-      if (is_last) {
-        change_direction("STOP");
-      } else {
-        change_direction(direction);
-      }
-    });
-  }
-
-  // 関数：move_to_directionを一定秒ごとに呼び出す
-  function self_driving_loop(maxCount, i) {
-    return new Promise(resolve => {
-      if (i <= maxCount) {
-        if (i < maxCount) {
-          move_to_direction();
-        } else {
-          is_last = true
-          move_to_direction(is_last);
-        }
-        setTimeout(function(){
-          self_driving_loop(maxCount, ++i)
-          resolve()
-        }, 1000);
-      }
-    })
-  };
-
-  // 関数：自動運転を始める
-  function self_driving() {
-    self_driving_loop(5, 0)
-  }
-
   // 「前進」ボタンが押されたときのイベント処理
   $('#forward').bind(BUTTON_DOWN, function(event) {
     if(direction == "STOP") {
@@ -260,6 +219,49 @@ w().ready(function() {
   speed = $('#slider').val();
 
 
+  // === 自動運転 ===
+
+  // 関数：自動運転を始める
+  function self_driving() {
+    self_driving_loop(5, 0)
+    read_adc_loop(5, 0)
+  }
+
+  // 関数：マクロを呼んで指定された方向に進む
+  function move_to_direction(is_last = false) {
+    w().callMacro('get_direction', [TRIG_F ,ECHO_F ,TRIG_R ,ECHO_R ,TRIG_L ,ECHO_L ,TRIG_B ,ECHO_B], function(macro, args, resp) {
+      resp = JSON.parse(resp)
+      direction = resp.direction.toUpperCase()
+
+      // DEBUG
+      console.log(direction)
+      console.log(resp.distances)
+
+      // if (is_last) {
+      //   change_direction("STOP");
+      // } else {
+      //   change_direction(direction);
+      // }
+    });
+  }
+
+  // 関数：move_to_directionを一定秒ごとに呼び出す
+  function self_driving_loop(maxCount, i) {
+    return new Promise(resolve => {
+      if (i <= maxCount) {
+        if (i < maxCount) {
+          move_to_direction();
+        } else {
+          is_last = true
+          move_to_direction(is_last);
+        }
+        setTimeout(function(){
+          self_driving_loop(maxCount, ++i)
+          resolve()
+        }, 1000);
+      }
+    })
+  };
 
   // 関数：ADCの出力した値をコンソールに出力する
   function read_adc(is_last = false) {
@@ -297,6 +299,4 @@ w().ready(function() {
       }
     })
   };
-
-  read_adc_loop(5, 0)
 });

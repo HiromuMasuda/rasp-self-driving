@@ -52,13 +52,19 @@ def read_adc(adcnum, clk, mosi, miso, cs):
     return adcout
 
 @webiopi.macro
-def get_direction_from_adc(clk, mosi, miso, cs):
+def get_direction_from_adc(prev_adc_out, clk, mosi, miso, cs):
+    prev_adc_out = int(prev_adc_out)
     adc_out = read_adc(0, clk, mosi, miso, cs)
 
-    # getting direction logic HERE
+    if prev_adc_out == 0:
+        direction = "right"
+    elif adc_out < prev_adc_out:
+        direction = "right"
+    else:
+        direction = "forward"
 
     context = {
-        "direction": "forward",
+        "direction": direction,
         "adc_out": adc_out
     }
     return json.dumps(context)
